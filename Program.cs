@@ -64,6 +64,10 @@ class Program
                 await botClient.SendTextMessageAsync(chatId,
                     "Якщо ти викинув сміття, то не забудь написати в чат \"/викинув\"(без лапок), а якщо поприбирав - \"/поприбирав\", бо інакше черга не перейде до іншого.\nДля зміни порядку чергування використай \"/change throw(або clean) <перелік учасників> <індекс чергового>\"",
                     cancellationToken: cancellationToken);
+            else if (messageText == "/info")
+                await botClient.SendTextMessageAsync(chatId,
+                    $"Черга по винесенню сміття: {_members_throw}, зараз чергує: {_members_throw[_currentIndexThrow]}\nЧерга по прибиранню: {_members_clean}, наступні вихідні прибирає: {_members_clean[_currentIndexClean]}",
+                    cancellationToken: cancellationToken);
             else if (messageText == "/викинув" &&
                      update.Message.From.Username == _members_throw[_currentIndexThrow].TrimStart('@'))
                 taskType = "throw";
@@ -74,7 +78,7 @@ class Program
             {
                 string[] splittedText = messageText.Split(" ");
                 string lineType = splittedText[1];
-                string[] newMembers = splittedText[1..(splittedText.Length - 1)];
+                string[] newMembers = splittedText[2..(splittedText.Length - 1)];
 
                 // дві перевірки коректності індексу 
                 if (!int.TryParse(splittedText[^1], out int newIndex))
