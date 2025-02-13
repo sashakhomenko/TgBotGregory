@@ -1,0 +1,45 @@
+# Rider project files
+.idea/
+.idea_modules/
+
+# Ignore build output
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userprefs
+
+# Rider caches and logs
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/libraries
+.idea/modules.xml
+.idea/.rider*
+
+# Ignore temporary files and logs
+*.log
+*.tmp
+*.bak
+*.swp
+*.sln.iml
+
+# ASP.NET & .NET runtime artifacts
+*.vs/
+.vscode/
+project.lock.json
+artifacts/
+
+# Environment variables and secrets
+.env
+secrets.json
+
+# Dependency cache
+packages/
+node_modules/
+
+# Operating System files
+.DS_Store
+Thumbs.db
