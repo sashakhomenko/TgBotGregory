@@ -60,9 +60,9 @@ class Program
                 await _botClient.SendTextMessageAsync(chatId, $"{nextUser}, привіт, зараз твоя черга викидати сміття!",
                     parseMode: ParseMode.Markdown);
             }
-            else if (messageText == "/info")
+            else if (messageText == "/help")
                 await botClient.SendTextMessageAsync(chatId,
-                    "\nЯкщо ти викинув сміття, то не забудь написати в чат \"/викинув\"(без лапок), а якщо поприбирав - \"/поприбирав\", бо інакше черга не перейде до іншого.",
+                    "Якщо ти викинув сміття, то не забудь написати в чат \"/викинув\"(без лапок), а якщо поприбирав - \"/поприбирав\", бо інакше черга не перейде до іншого.\nДля зміни порядку чергування використай \"/change throw(або clean) <перелік учасників> <індекс чергового>\"",
                     cancellationToken: cancellationToken);
             else if (messageText == "/викинув" &&
                      update.Message.From.Username == _members_throw[_currentIndexThrow].TrimStart('@'))
@@ -70,6 +70,46 @@ class Program
             else if (messageText == "/поприбирав" &&
                      update.Message.From.Username == _members_throw[_currentIndexThrow].TrimStart('@'))
                 taskType = "clean";
+            else if (messageText.StartsWith("/change"))
+            {
+                string[] splittedText = messageText.Split(" ");
+                string lineType = splittedText[1];
+                string[] newMembers = splittedText[1..(splittedText.Length - 1)];
+
+                // дві перевірки коректності індексу 
+                if (!int.TryParse(splittedText[^1], out int newIndex))
+                {
+                    await botClient.SendTextMessageAsync(chatId,
+                        "Не вдалося прочитати індекс чергового. Перевір шаблон вводу команди.",
+                        cancellationToken: cancellationToken);
+                    return;
+                }
+                if (newIndex > newMembers.Length - 1 || newIndex < 0)
+                { 
+                    await botClient.SendTextMessageAsync(chatId,
+                        "Індекс виходить за рамки списку чергових.",
+                        cancellationToken: cancellationToken);
+                    return; 
+                }
+                if (lineType == "throw")
+                {
+                    _members_throw = new List<string>(newMembers);
+                    _currentIndexThrow = newIndex;
+                }
+                else if (lineType == "clean")
+                {
+                    _members_clean = new List<string>(newMembers);
+                    _currentIndexClean = newIndex;
+                }
+                else
+                {
+                    await botClient.SendTextMessageAsync(chatId,
+                        "Некоректний тип списку чергових. Наявні throw, clean",
+                        cancellationToken: cancellationToken);
+                    return;
+                }
+            }
+
 
             // Зміна чергового
             if (taskType != string.Empty)
