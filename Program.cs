@@ -73,10 +73,10 @@ class Program
                     cancellationToken: cancellationToken);
             }
             else if (messageText == "/викинув" &&
-                     update.Message.From.Username == _members_throw[_currentIndexThrow].TrimStart('@'))
+                     update.Message.From.Username.ToLower() == _members_throw[_currentIndexThrow].TrimStart('@'))
                 taskType = "throw";
             else if (messageText == "/поприбирав" &&
-                     update.Message.From.Username == _members_throw[_currentIndexThrow].TrimStart('@'))
+                     update.Message.From.Username.ToLower() == _members_throw[_currentIndexThrow].TrimStart('@'))
                 taskType = "clean";
             else if (messageText.StartsWith("/change"))
             {
