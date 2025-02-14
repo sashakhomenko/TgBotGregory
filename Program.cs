@@ -10,12 +10,13 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Polling;
 using DotNetEnv;
+using System.Collections;
 
 class Program
 {
     private static ITelegramBotClient _botClient;
-    // private static List<string> _members_throw = new List<string> { "@Kefirolab", "@xelanko", "@Forterat", "@Денис"};
-    // private static List<string> _members_clean = new List<string> { "@Денис", "@Kefirolab", "@menakata", "@xelanko", "@Forterat"};
+    // private static List<string> _members_throw = new List<string> { "@Kefirolab", "@xelanko", "@Forterat", "@Денис" };
+    //private static List<string> _members_clean = new List<string> { "@Kefirolab", "@menakata", "@xelanko", "@Forterat", "@Денис" };
     private static List<string> _members_throw = new List<string> { "@xelanko", "@Lonex17KO" };
     private static List<string> _members_clean = new List<string> { "@xelanko", "@Lonex17KO" };
     private static int _currentIndexThrow = 0;
@@ -61,13 +62,18 @@ class Program
                     parseMode: ParseMode.Markdown);
             }
             else if (messageText == "/help")
+                // + Для зміни порядку чергування використай \"/change throw(або clean) <перелік учасників> <індекс чергового>\"
                 await botClient.SendTextMessageAsync(chatId,
-                    "Якщо ти викинув сміття, то не забудь написати в чат \"/викинув\"(без лапок), а якщо поприбирав - \"/поприбирав\", бо інакше черга не перейде до іншого.\nДля зміни порядку чергування використай \"/change throw(або clean) <перелік учасників> <індекс чергового>\"",
+                    "Якщо ти викинув сміття, не забудь написати в чат \"/викинув\"(без лапок), а якщо поприбирав - \"/поприбирав\", бо інакше черга не перейде до іншого.\n Команда \"/info\" - показує порядок чергування",
                     cancellationToken: cancellationToken);
             else if (messageText == "/info")
+            {
+                List<string> trimmed_members_throw = _members_throw.Select(item => item[1..]).ToList();
+                List<string> trimmed_members_clean = _members_clean.Select(item => item[1..]).ToList();
                 await botClient.SendTextMessageAsync(chatId,
-                    $"Черга по винесенню сміття: {string.Join(", ", _members_throw)}, зараз чергує: {_members_throw[_currentIndexThrow]}\nЧерга по прибиранню: {string.Join(", ", _members_clean)}, наступні вихідні прибирає: {_members_clean[_currentIndexClean]}",
+                    $"Черга по винесенню сміття: {string.Join(", ", trimmed_members_throw)}, зараз чергує: {trimmed_members_throw[_currentIndexThrow]}\nЧерга по прибиранню: {string.Join(", ", trimmed_members_clean)}, наступні вихідні прибирає: {trimmed_members_clean[_currentIndexClean]}",
                     cancellationToken: cancellationToken);
+            }
             else if (messageText == "/викинув" &&
                      update.Message.From.Username == _members_throw[_currentIndexThrow].TrimStart('@'))
                 taskType = "throw";
@@ -78,8 +84,11 @@ class Program
             {
                 string[] splittedText = messageText.Split(" ");
                 string lineType = splittedText[1];
-                string[] newMembers = splittedText[2..(splittedText.Length - 1)];
-
+                List<string> newMembers = new List<string> { };
+                foreach (string member in splittedText[2..(splittedText.Length - 1)]) // ніки вводяться без @, тому додаю його на початок 
+                {
+                    newMembers.Add("@" + member);
+                }
                 // дві перевірки коректності індексу 
                 if (!int.TryParse(splittedText[^1], out int newIndex))
                 {
@@ -88,12 +97,12 @@ class Program
                         cancellationToken: cancellationToken);
                     return;
                 }
-                if (newIndex > newMembers.Length - 1 || newIndex < 0)
-                { 
+                if (newIndex > newMembers.Count - 1 || newIndex < 0)
+                {
                     await botClient.SendTextMessageAsync(chatId,
                         "Індекс виходить за рамки списку чергових.",
                         cancellationToken: cancellationToken);
-                    return; 
+                    return;
                 }
                 if (lineType == "throw")
                 {
