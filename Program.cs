@@ -15,10 +15,8 @@ using System.Collections;
 class Program
 {
     private static ITelegramBotClient _botClient;
-    // private static List<string> _members_throw = new List<string> { "@Kefirolab", "@xelanko", "@Forterat", "@Денис" };
-    //private static List<string> _members_clean = new List<string> { "@Kefirolab", "@menakata", "@xelanko", "@Forterat", "@Денис" };
-    private static List<string> _members_throw = new List<string> { "@xelanko", "@Lonex17KO" };
-    private static List<string> _members_clean = new List<string> { "@xelanko", "@Lonex17KO" };
+     private static List<string> _members_throw = new List<string> { "@kefirolab", "@xelanko", "@forterat", "@денис" };
+    private static List<string> _members_clean = new List<string> { "@kefirolab", "@menakata", "@xelanko", "@forterat", "@денис" };
     private static int _currentIndexThrow = 0;
     private static int _currentIndexClean = 0;
 
@@ -64,7 +62,7 @@ class Program
             else if (messageText == "/help")
                 // + Для зміни порядку чергування використай \"/change throw(або clean) <перелік учасників> <індекс чергового>\"
                 await botClient.SendTextMessageAsync(chatId,
-                    "Якщо ти викинув сміття, не забудь написати в чат \"/викинув\"(без лапок), а якщо поприбирав - \"/поприбирав\", бо інакше черга не перейде до іншого.\n Команда \"/info\" - показує порядок чергування",
+                    "Якщо ти викинув сміття, не забудь написати в чат \"/викинув\"(без лапок), а якщо поприбирав - \"/поприбирав\", бо інакше черга не перейде до іншого.\nКоманда \"/info\" - показує порядок чергування",
                     cancellationToken: cancellationToken);
             else if (messageText == "/info")
             {
