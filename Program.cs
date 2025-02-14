@@ -15,7 +15,7 @@ using System.Collections;
 class Program
 {
     private static ITelegramBotClient _botClient;
-     private static List<string> _members_throw = new List<string> { "@kefirolab", "@xelanko", "@forterat", "@денис" };
+     private static List<string> _members_throw = new List<string> {"@xelanko", "@forterat", "@денис", "@kefirolab"};
     private static List<string> _members_clean = new List<string> { "@kefirolab", "@menakata", "@xelanko", "@forterat", "@денис" };
     private static int _currentIndexThrow = 0;
     private static int _currentIndexClean = 0;
@@ -76,7 +76,7 @@ class Program
                      update.Message.From.Username.ToLower() == _members_throw[_currentIndexThrow].TrimStart('@'))
                 taskType = "throw";
             else if (messageText == "/поприбирав" &&
-                     update.Message.From.Username.ToLower() == _members_throw[_currentIndexThrow].TrimStart('@'))
+                     update.Message.From.Username.ToLower() == _members_clean[_currentIndexClean].TrimStart('@'))
                 taskType = "clean";
             else if (messageText.StartsWith("/change"))
             {
