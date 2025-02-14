@@ -66,7 +66,7 @@ class Program
                     cancellationToken: cancellationToken);
             else if (messageText == "/info")
                 await botClient.SendTextMessageAsync(chatId,
-                    $"Черга по винесенню сміття: {_members_throw}, зараз чергує: {_members_throw[_currentIndexThrow]}\nЧерга по прибиранню: {_members_clean}, наступні вихідні прибирає: {_members_clean[_currentIndexClean]}",
+                    $"Черга по винесенню сміття: {string.Join(", ", _members_throw)}, зараз чергує: {_members_throw[_currentIndexThrow]}\nЧерга по прибиранню: {string.Join(", ", _members_clean)}, наступні вихідні прибирає: {_members_clean[_currentIndexClean]}",
                     cancellationToken: cancellationToken);
             else if (messageText == "/викинув" &&
                      update.Message.From.Username == _members_throw[_currentIndexThrow].TrimStart('@'))
@@ -168,16 +168,15 @@ class Program
         while (!cancellationToken.IsCancellationRequested)
         {
             var chatId = Environment.GetEnvironmentVariable("CHAT_ID");// ID чату 
-            var currentUser = _members_throw[_currentIndexThrow];
             DateTime now = DateTime.Now;
             string currentTime = now.ToString("HH:mm");
             DayOfWeek dayOfWeek = now.DayOfWeek;
             if (currentTime == "16:00" && dayOfWeek == DayOfWeek.Friday)
                 await _botClient.SendTextMessageAsync(chatId,
-                    $"{_currentIndexClean}, привіт, ці вихідні твоя черга прибирати у квартирі!",
+                    $"{_members_clean[_currentIndexClean]}, привіт, ці вихідні твоя черга прибирати у квартирі!",
                     parseMode: ParseMode.Markdown);
             if (currentTime == "09:00")
-                await _botClient.SendTextMessageAsync(chatId, $"{currentUser}, привіт, не забудь викинути сміття!",
+                await _botClient.SendTextMessageAsync(chatId, $"{_members_throw[_currentIndexThrow]}, привіт, не забудь викинути сміття!",
                     cancellationToken: cancellationToken);
             Thread.Sleep(60000); // 1 minute delay
         }
